@@ -24,7 +24,6 @@ def prepare_future_match(home_team, away_team, date, time, rolling_stats, odds):
         'B365A': [odds[2]]   # Cote extérieure
     })
 
-    # Ajouter les moyennes mobiles pour les équipes
     home_stats = rolling_stats[rolling_stats['Equipe_Domicile'] == home_team].iloc[-1]
     away_stats = rolling_stats[rolling_stats['Equipe_Domicile'] == away_team].iloc[-1]
 
@@ -36,15 +35,11 @@ def prepare_future_match(home_team, away_team, date, time, rolling_stats, odds):
 
     return future_match
 
-# Fonction pour prédire le résultat du match
 def predict_match(home_team, away_team, date, time, odds):
     # Préparer les données du match futur
     future_match = prepare_future_match(home_team, away_team, date, time, matches_rolling, odds)
-
-    # Prédire le résultat
     prediction = rf.predict(future_match[predictors])
 
-    # Interpréter la prédiction
     result_map = {1: "Victoire Domicile", 0: "Victoire Extérieure", 2: "Match Nul"}
     predicted_result = result_map[prediction[0]]
 
@@ -76,7 +71,7 @@ matches_rolling = matches.groupby("Equipe_Domicile").apply(lambda x: rolling_ave
 matches_rolling = matches_rolling.droplevel('Equipe_Domicile')
 matches_rolling.index = range(matches_rolling.shape[0])
 
-# ---- 4️⃣ Sélection des variables pour le modèle ----
+# Sélection des variables pour le modèle
 new_features = [
     "Buts_Domicile", "Buts_Exterieur",
     "Tirs_Domicile", "Tirs_Exterieur",
@@ -89,32 +84,32 @@ new_features = [
 
 predictors = ["opp_code", "Jour_Match", "Heure_Match", 'B365H', 'B365D', 'B365A'] + new_features + new_cols
 
-# ---- Division des données en train/test ----
+# Division des données en train/test
 train = matches_rolling[matches_rolling["Saison"] <= "2020"]
 test = matches_rolling[matches_rolling["Saison"] >= "2021"]
 
 rf = RandomForestClassifier(
-    # n_estimators=100,
-    # max_depth=14,
-    # min_samples_split=14,
-    # min_samples_leaf=2,
-    # random_state=1,
-    # class_weight='balanced'
-    n_estimators=50,
-    min_samples_split=10,
+    n_estimators=100,
+    max_depth=14,
+    min_samples_split=14,
+    min_samples_leaf=2,
     random_state=1,
+    class_weight='balanced'
+    # n_estimators=50,
+    # min_samples_split=10,
+    # random_state=1,
 )
 
 rf.fit(train[predictors], train["Target_Prediction"])
 preds = rf.predict(test[predictors])
 
-# ---- Évaluation du modèle ----
+# Évaluation du modèle
 accuracy = accuracy_score(test["Target_Prediction"], preds)
 conf_matrix = confusion_matrix(test["Target_Prediction"], preds)
 precision = precision_score(test["Target_Prediction"], preds, average='weighted')  # Moyenne pondérée pour chaque classe
 
 
-# ---- Affichage des résultats ----
+# Affichage des résultats
 plot_confusion_matrix(conf_matrix)
 # Calculer les importances des caractéristiques
 importances = rf.feature_importances_
@@ -122,7 +117,7 @@ feature_names = predictors
 feature_importance_df = pd.DataFrame({'Feature': feature_names, 'Importance': importances})
 
 
-# Appeler la fonction pour générer et enregistrer le graphique des importances des caractéristiques
+# Générer et enregistrer le graphique des importances des caractéristiques
 plot_feature_importances(feature_importance_df)
 
 print(f"Taille de l'echantillon de train : {train.shape[0]}")
@@ -135,7 +130,12 @@ print(f"📊 Matrice de confusion :\n {conf_matrix}")
 
 
 
-# Titre principal
+st.set_page_config(
+    page_title="Machine Learning - Ligue 1",
+    page_icon="⚽",
+)
+
+
 st.markdown("<h1 style='font-size: 36px; font-weight: bolder;'>Machine Learning - Matchs de Ligue 1</h1>", unsafe_allow_html=True)
 
 # Informations sur le modèle
