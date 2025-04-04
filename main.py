@@ -145,7 +145,7 @@ with col1:
     st.metric("✅ Précision (modèle)", f"{accuracy:.2f}")
     st.metric("Nb valeurs pour l'entrainement", f"{train.shape[0]}")
 with col2:
-    st.metric("🎯 Score de précision (modèle)", f"{precision:.2f}")  # Assurez-vous d'utiliser la variable 'precision' ici
+    st.metric("🎯 Score de précision (modèle)", f"{precision:.2f}")
     st.metric("Nb valeurs pour les tests", f"{test.shape[0]} ({test.shape[0] / (train.shape[0] + test.shape[0]) * 100:.2f}%)")
 
 st.markdown("<h1 style='font-size: 24px; font-weight: bolder;'>📊 Matrice de confusion</h1>", unsafe_allow_html=True)
