@@ -1,6 +1,6 @@
 # Prédiction des matchs de Ligue 1 - Machine Learning
 
-Application Streamlit utilisant le machine learning afin de prédire les résultats des matchs de football de la Ligue 1.
+Application Streamlit réalisée dans le cadre d'un exercice lors de ma formation chez Live Campus, utilisant le machine learning en python afin de prédire les résultats des matchs de football de la Ligue 1.
 
 Données utilisées retrouvable sur [football-data.co.uk](https://www.football-data.co.uk/downloadm.php) ainsi que leurs [définitions](https://www.football-data.co.uk/notes.txt).
 
